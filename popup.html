@@ -1,0 +1,85 @@
+<head>
+  <style>
+    body {
+      -webkit-background-clip: border-box;
+      -webkit-background-origin: padding-box;
+      -webkit-background-size: auto;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      -webkit-user-select: none;
+      background-color: rgb(51,51,51);
+    }
+   .results {
+     text-align: right;
+     min-width: 6em;
+     color: black;
+    }
+    #controls {
+      width: 150px;
+      padding: 0;
+      height: 22px;
+      line-height: 22px;
+      vertical-align: middle;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    #controls button {
+      display: inline-block;
+      vertical-align: middle;
+      overflow: hidden;
+      text-indent: -9999em;
+      padding: 0;
+      margin: 0px;
+      position: relative;
+      top: -1px;
+      border: none;
+    }
+    #controls button.small {
+      width: 25px;
+      height: 20px;
+      margin: 0;
+      background: url(player-sprite.png) 5px -72px no-repeat;
+    }
+    #controls button.small:active {
+      background-position: -35px -72px;
+    }
+    #controls #play-pause {
+      width: 32px;
+      height: 20px;
+      background: url(player-sprite.png) 10px -22px no-repeat;
+    }
+    #controls #play-pause.playing {
+      background-position: 10px 3px;
+    }
+    #controls #play-pause.playing:active {
+      background-position: -30px 3px;
+    }
+    #controls #play-pause:active {
+      background-position: -30px -22px;
+    }
+    #controls #next {
+      background-position: 5px -47px;
+    }
+    #controls #next:active {
+      background-position: -35px -47px;
+    }
+    #track_details {
+      display: none;
+    }
+  </style>
+  <script src="popup.js"></script>
+  </head>
+  <body>
+  <div id="controls">
+    <button class="small" id="previous">Back</button>
+    <button class="small" id="play-pause">Back</button>
+    <button class="small" id="next">Back</button>
+  </div>
+  <div id="track_details">
+    <span>Track Details</span>
+    <div id='album_art'></div>
+    <div id='track_name'></div>
+    <div id='artist_name'></div>
+  </div>
+</body>

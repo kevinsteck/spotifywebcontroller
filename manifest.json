@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+
+  "name": "Spotify Controls",
+  "description": "This extension allows you to play/pause/skip Spotify from your Chrome toolbar",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "matches": ["https://play.spotify.com/apps/player/*"],
+      "js": ["listener.js"]
+    }
+  ],
+  "permissions": [
+    "https://play.spotify.com/"
+  ]
+}
