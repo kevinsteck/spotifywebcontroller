@@ -1,3 +1,5 @@
+var port = null;
+
 function play_pause() {
   sendMessage('play_pause');
 }
@@ -10,10 +12,13 @@ function previous() {
   sendMessage('previous');
 }
 
-function sendMessage(msg) {
-  chrome.tabs.query({url: 'https://play.spotify.com/*'}, function(tabs) {
-    var port = chrome.tabs.connect(tabs[0].id);
-    port.postMessage({action: msg});
+function status() {
+  sendMessage('status');
+}
+
+function setup() {
+  chrome.tabs.query({url: 'https://play.spotify.com/*'}, function (tabs) {
+    port = chrome.tabs.connect(tabs[0].id);
     port.onMessage.addListener(function getResp(response) {
       if (response.change) {
         // setTimeout(function() { port.postMessage({action: 'track_details'}); }, 1000);
@@ -31,8 +36,16 @@ function sendMessage(msg) {
   });
 }
 
+function sendMessage(msg) {
+  if (port) { port.postMessage({action: msg}); }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#previous').addEventListener('click', previous);
   document.querySelector('#play-pause').addEventListener('click', play_pause);
   document.querySelector('#next').addEventListener('click', next);
+
+  setup();
+  setTimeout(status, 25);
 });
+
