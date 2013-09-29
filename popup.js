@@ -21,7 +21,7 @@ function sendMessage(msg) {
         document.getElementById('album_art').innerHTML = response.album_art;
         document.getElementById('track_name').innerHTML = response.track_name;
         document.getElementById('artist_name').innerHTML = response.artist_name;
-      } else if (response.state) {
+      } else if (typeof response.state !== "undefined") {
         document.querySelector('#play-pause').className = response.state;
       }
     });

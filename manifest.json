@@ -11,6 +11,7 @@
   },
   "content_scripts": [
     {
+      "run_at": "document_end",
       "all_frames": true,
       "matches": ["https://play.spotify.com/apps/player/*"],
       "js": ["listener.js"]

@@ -1,12 +1,7 @@
 var SpotifyController = {
-  play_pause: function() {
+  play_pause: function(t) {
     var button = document.getElementById('play-pause');
     button.click();
-  },
-
-  is_playing: function() {
-    var button = document.getElementById('play-pause');
-    return button.className;
   },
 
   previous: function() {
@@ -29,15 +24,18 @@ var SpotifyController = {
 };
 
 chrome.runtime.onConnect.addListener(function(port) {
-  var player = document.getElementById('player');
-  player.addEventListener('change:playing', function() {
-    port.postMessage({state: SpotifyController.is_playing()});
-  });
+  // state changes
+  document.documentElement.addEventListener("spotify_playing", function() {
+    port.postMessage({state: 'playing'});
+  }, false);
+  document.documentElement.addEventListener("spotify_paused", function() {
+    port.postMessage({state: 'paused'});
+  }, false);
+
   port.onMessage.addListener(function(msg) {
     switch (msg.action) {
       case 'play_pause':
-        SpotifyController.play_pause();
-        // setTimeout(function() {port.postMessage({state: SpotifyController.is_playing()}); }, 1000);
+        SpotifyController.play_pause(this);
         break;
       case 'next':
         SpotifyController.next();
@@ -50,6 +48,39 @@ chrome.runtime.onConnect.addListener(function(port) {
         break;
     }
 
-    if (msg.action != 'track_details') port.postMessage({change: true});
+    // if (msg.action != 'track_details') port.postMessage({change: true});
   });
 });
+
+var script_function = function attach_to_spotify() {
+  if(this.SpotifyApi) {
+    window.addEventListener('load', function() {
+      // a bit hacky but the loading of the playpausebutton dom is delayed
+      // I could probably bind the function that loads it but this works
+      setTimeout(function() {
+        if (this.SpotifyApi) {
+          if (this.SpotifyApi.api._modules['/scripts/player.playpausebutton']) {
+            var toggle = this.SpotifyApi.api._modules['/scripts/player.playpausebutton'].PlayPauseButton.prototype.toggle;
+            this.SpotifyApi.api._modules['/scripts/player.playpausebutton'].PlayPauseButton.prototype.toggle = function(b) {
+              // this means it's going to go into a pause state (inverse logic)
+              if (this._player.playing) {
+                var evnt = document.createEvent("Event");
+                evnt.initEvent("spotify_paused", false, false);
+                document.documentElement.dispatchEvent(evnt);
+              } else {
+                var evnt = document.createEvent("Event");
+                evnt.initEvent("spotify_playing", false, false);
+                document.documentElement.dispatchEvent(evnt);
+              }
+              toggle.bind(this)(b);
+            }
+          }
+        }
+      }, 5000);
+    }, false);
+  }
+};
+
+var s = document.createElement("script");
+s.textContent = script_function.toString() + 'attach_to_spotify();';
+document.body.appendChild(s);
