@@ -25,6 +25,9 @@ function sendMessage(msg) {
         document.querySelector('#play-pause').className = response.state;
       }
     });
+    port.onDisconnect.addListener(function() {
+        port = null;
+    });
   });
 }
 

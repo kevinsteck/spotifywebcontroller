@@ -25,12 +25,14 @@ var SpotifyController = {
 
 chrome.runtime.onConnect.addListener(function(port) {
   // state changes
-  document.documentElement.addEventListener("spotify_playing", function() {
+  var playing = function(e) {
     port.postMessage({state: 'playing'});
-  }, false);
-  document.documentElement.addEventListener("spotify_paused", function() {
+  };
+  var paused = function(e) {
     port.postMessage({state: 'paused'});
-  }, false);
+  };
+  document.documentElement.addEventListener("spotify_playing", playing, false);
+  document.documentElement.addEventListener("spotify_paused", paused, false);
 
   port.onMessage.addListener(function(msg) {
     switch (msg.action) {
@@ -47,8 +49,13 @@ chrome.runtime.onConnect.addListener(function(port) {
         port.postMessage(SpotifyController.track_details());
         break;
     }
-
     // if (msg.action != 'track_details') port.postMessage({change: true});
+  });
+
+  port.onDisconnect.addListener(function() {
+      document.documentElement.removeEventListener("spotify_playing", playing, false);
+      document.documentElement.removeEventListener("spotify_paused", paused, false);
+      port = null;
   });
 });
 
